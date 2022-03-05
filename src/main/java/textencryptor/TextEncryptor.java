@@ -1,4 +1,4 @@
-package textEncryptor;
+package textencryptor;
 
 public class TextEncryptor {
 
