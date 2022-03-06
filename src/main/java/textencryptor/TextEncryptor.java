@@ -141,6 +141,10 @@ public static final String filesPath = "./";
 	 */
 	public static boolean readingFile() throws IOException {
 		ArrayList <String> existingFiles = displayTextFiles();
+		if(existingFiles==null) {
+			show("\nThere are no files...");
+			return true;
+		}
 		boolean fileExists;
 		String fileName;
 		do {
