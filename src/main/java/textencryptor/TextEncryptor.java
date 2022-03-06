@@ -1,18 +1,9 @@
 package textencryptor;
 
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -28,7 +19,7 @@ import java.nio.file.Paths;
  *
  */
 
-public class TextEncryptor {
+public class TextEncryptor extends GeneralHelper{
 
 private static final Scanner scan = new Scanner(System.in);	
 	/**
@@ -132,25 +123,13 @@ private static final Scanner scan = new Scanner(System.in);
 	 * Shows the content of the decrypted file
 	 */
 	public static void showFileContent(String content) {
-		show("\n:::::::::::::CONTENT OF YOUR SECRET FILE:::::::::::::");
+		show("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+		show(":::::::::::::::  CONTENT OF YOUR SECRET FILE  ::::::::::::::::");
+		show("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
 		show(content);
-		show(":::::::::::::::END OF SECRET FILE:::::::::::::::::::::\n");
-	}
-	
-	
-	/*
-	 * Shows Option Yes as 1 and true and No as 0 and false
-	 * @returns boolean
-	 */
-	public static boolean yesNoOption() {
-		show("[1] Yes");
-		show("[2] No");
-		int continueOption = readNumber();
-		if(continueOption==1) {
-			return true;
-		}else {
-			return false;
-		}
+		show("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+		show(":::::::::::::::       END OF SECRET FILE      ::::::::::::::::");
+		show("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
 	}
 	
 	/*
@@ -189,35 +168,10 @@ private static final Scanner scan = new Scanner(System.in);
 		return !yesNoOption();
 	}
 
-	/*
-	 * Prints any string in separate lines
-	 * @param showing A String type
-	 * @return No return value.
-	 */
-	public static void show(String showing) {
-		System.out.println(showing);
-	}
-	
 	
 	/*
-	 * Makes sure to get a number from the User.
-	 * returns '0' if it's a letter
-	 * @returns int
+	 * Displays all the text files in the ./src/main/files directory
 	 */
-	public static int readNumber() {
-		System.out.print("ENTER OPTION: ");
-		int n;
-		try{
-			n = scan.nextInt();
-		}catch(InputMismatchException e) {
-			n = 0;
-			show("[Error] Just numbers allowed.");
-		}
-		scan.nextLine();
-		return n;
-	}
-	
-	
 	public static ArrayList<String> displayTextFiles() {
 		show("\n-----Available text files-----");
 		File file = new File("./src/main/files");
@@ -232,9 +186,9 @@ private static final Scanner scan = new Scanner(System.in);
 			}
 		}
 		if(count==0) {
-			show("No files available");
+			show("  *** No files available ***");
 		}
-		show("------------------------------\n");
+		show("------------------------------");
 		if (existingFiles.size()==0) {
 			return null;
 		}else {
@@ -242,11 +196,17 @@ private static final Scanner scan = new Scanner(System.in);
 		}
 	}
 	
+	/*
+	 * Receive file name from user
+	 */
 	public static String choosingFile() {
-		System.out.print("INSERT FILE NAME: ");
+		System.out.print("\nINSERT FILE NAME: ");
 		return scan.nextLine();
 	}
 	
+	/*
+	 * Verifies the existence of the file name with the name inserted by user
+	 */
 	public static boolean verifyFileExistence(String fileName, ArrayList<String> existingFiles) {
 		if (existingFiles!=null) {
 			for (String str : existingFiles) {
@@ -257,53 +217,25 @@ private static final Scanner scan = new Scanner(System.in);
 		}
 		return false;
 	}
+	
+	/**
+	 * Make sure if User should continue with file Edition
+	 * @returns a boolean, true for continuation
+	 */
 	public static boolean continueWithFileEdition(boolean fileExists) {
 		if (fileExists) {
 			return true;
 		}else {
-			show("Are you sure you want to add a new File?");
-			show("[1] Yes");
-			show("[2] No");
-			int continueOption = readNumber();
-			switch (continueOption){
-				case 1 -> {
-					return true;
-				}
-				case 2 -> {
-					return false;
-				}
-				default ->{
-					return continueWithFileEdition(fileExists);
-				}
-			}
-				
+			show("Are you sure you want to add a new file?");
+			return yesNoOption();
 		}
 	}
 	
-	public static String gettingPassword() throws IOException {
-		show("Waiting for your password in the Pop-up Window...");
-		BufferedImage lockIcon = ImageIO.read(new File("./src/img/lock.png"));
-        JPanel panel = new JPanel();
-        JLabel labelIcon = new JLabel(new ImageIcon(lockIcon));
-        JLabel labelPassword = new JLabel("Enter a password: ");
-
-        JPasswordField passwordField = new JPasswordField(10);
-        panel.add(labelIcon);
-        panel.add(labelPassword);
-        panel.add(passwordField);
-        String[] options = new String[]{"OK", "Cancel"};
-        int optionss = JOptionPane.showOptionDialog(null, panel, "Restricted Access",
-                JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-                null, options, options[0]);
-        String passString = null;
-        if (optionss == 0) // pressing OK button
-        {
-            char[] password = passwordField.getPassword();
-            passString = new String(password);
-        }
-        return passString;
-    }
 	
+	/**
+	 * Makes sure to get without errors the content of encrypted text
+	 * @returns String
+	 */
 	public static String getOldContentFromFile(String fileName) {
 		if (!(fileName.substring(fileName.length()-3).equals(".txt"))){
 			fileName=fileName+".txt";
@@ -316,11 +248,21 @@ private static final Scanner scan = new Scanner(System.in);
 		} 
 	}
 	
+	/**
+	 * Gets the readable content from the user to insert to a file
+	 * @return String
+	 */
 	public static String getNewTextFromUser() {
 		show("Add information you would like to encrypt:");
 		return scan.nextLine();
 	}
 	
+	/**
+	 * Using the name and content for a file, it simply edits all the content of the 
+	 * existing text file.
+	 * @param fileName
+	 * @param finalContentForFile
+	 */
 	public static void setNewContentForFile(String fileName, String finalContentForFile) {
 		if (!(fileName.substring(fileName.length()-3).equals(".txt"))){
 			fileName=fileName+".txt";
