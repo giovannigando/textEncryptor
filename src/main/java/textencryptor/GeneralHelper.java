@@ -1,7 +1,6 @@
 package textencryptor;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -75,13 +74,18 @@ public class GeneralHelper {
 	 */
 	public static String gettingPassword() throws IOException {
 		show("Waiting for your password in the Pop-up Window...");
-		BufferedImage lockIcon = ImageIO.read(new File("./src/img/lock.png"));
-        JPanel panel = new JPanel();
-        JLabel labelIcon = new JLabel(new ImageIcon(lockIcon));
+		JPanel panel = new JPanel();
         JLabel labelPassword = new JLabel("Enter a password: ");
-
+		BufferedImage lockIcon;
+        try {
+			lockIcon = ImageIO.read(TextEncryptor.class.getResource("lock.png"));
+	        JLabel labelIcon = new JLabel(new ImageIcon(lockIcon));
+	        panel.add(labelIcon);
+		}catch (Exception e) {
+			JLabel labelIcon = new JLabel("!!");
+			panel.add(labelIcon);
+		}
         JPasswordField passwordField = new JPasswordField(10);
-        panel.add(labelIcon);
         panel.add(labelPassword);
         panel.add(passwordField);
         String[] options = new String[]{"OK", "Cancel"};

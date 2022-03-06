@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 public class TextEncryptor extends GeneralHelper{
 
 private static final Scanner scan = new Scanner(System.in);	
+public static final String filesPath = "./";
 	/**
 	 * Choose to create, edit or read encrypted files
 	 * @param args A string array containing the 
@@ -43,7 +44,6 @@ private static final Scanner scan = new Scanner(System.in);
 					activeProgram = readingFile();
 				}
 				case 3->{
-					show("Goodbye!!");
 					activeProgram=false;
 				}
 				default ->{
@@ -51,6 +51,7 @@ private static final Scanner scan = new Scanner(System.in);
 				}
 				}
 		}while(activeProgram);
+		show("\nGoodbye!!");
 	}
 	
 	/*
@@ -59,7 +60,7 @@ private static final Scanner scan = new Scanner(System.in);
 	 * @return int
 	 */
 	public static int choosingFromMainOptions() {
-		show("Choose one of the options below");
+		show("\nChoose one of the options below");
 		show("[1] Write content into File");
 		show("[2] Read content from File");
 		show("[3] Exit");
@@ -108,6 +109,9 @@ private static final Scanner scan = new Scanner(System.in);
 		String finalContentForFile = "";
 		String finalContentForFileEncrypted;
 		String newContentForFile = getNewTextFromUser();
+		if (oldContentFromFileEncrypted==null) {
+			oldContentFromFileEncrypted = "";
+		}
 		if (oldContentFromFileEncrypted.length()!=0) {
 			finalContentForFile = oldContentFromFileDecrypted + " \n";
 		}
@@ -116,7 +120,6 @@ private static final Scanner scan = new Scanner(System.in);
 		setNewContentForFile(fileName, finalContentForFileEncrypted);
 		show("Success Editing the File.\nDo you want to exit the program?");
 		return !yesNoOption();
-		
 	}
 	
 	/*
@@ -174,19 +177,22 @@ private static final Scanner scan = new Scanner(System.in);
 	 */
 	public static ArrayList<String> displayTextFiles() {
 		show("\n-----Available text files-----");
-		File file = new File("./src/main/files");
+		File file = new File(filesPath);
 		String[] fileList = file.list();
 		ArrayList <String> existingFiles = new ArrayList <String>();
 		int count = 0;
-		for(String str: fileList){
-			if(str.substring(Math.max(0, str.length()-3)).equals("txt")){
-				show("--->\t"+str);
-				existingFiles.add(str);
-				count++;
+		if(fileList!= null) {
+			for(String str: fileList){
+				if(str.substring(Math.max(0, str.length()-3)).equals("txt")){
+					show("--->\t"+str);
+					existingFiles.add(str);
+					count++;
+				}
 			}
-		}
-		if(count==0) {
-			show("  *** No files available ***");
+		}else {
+			if(count==0) {
+				show("  *** No files available ***");
+			}
 		}
 		show("------------------------------");
 		if (existingFiles.size()==0) {
@@ -241,7 +247,7 @@ private static final Scanner scan = new Scanner(System.in);
 			fileName=fileName+".txt";
 		}
 		try {
-			return new String(Files.readAllBytes(Paths.get(("./src/main/files/"+fileName), new String[0])), Charset.forName("UTF-8"));
+			return new String(Files.readAllBytes(Paths.get((filesPath+fileName), new String[0])), Charset.forName("UTF-8"));
 		} catch (IOException ex) {
 			show("[Error] Problem reading file " + fileName);
 			return null;
@@ -268,11 +274,11 @@ private static final Scanner scan = new Scanner(System.in);
 			fileName=fileName+".txt";
 		}
 		try{
-			FileWriter fileWriter = new FileWriter("./src/main/files/"+fileName);
+			FileWriter fileWriter = new FileWriter(fileName);
 			fileWriter.write(finalContentForFile);
 			fileWriter.close();
 		}catch(Exception e) {
-			show("[Error] It was impossible to edit the file.");
+			show(e.toString());
 		}
         
 	}
